@@ -1,4 +1,8 @@
 import {
+  DeleteEmployeeResponse,
+  UpdateEmployeeResponse,
+} from './../../../constants/response';
+import {
   CreateEmployeeResponse,
   GetEmployeeResponse,
 } from '@src/constants/response';
@@ -15,4 +19,17 @@ export interface IEmployeeService {
     role: Role,
     creatorEmail: string,
   ): Promise<CreateEmployeeResponse>;
+  updateEmployee(
+    email: string,
+    password: string,
+    name: string,
+    dob: Date,
+    phoneNumber: number,
+    role: Role,
+    editorEmail: string,
+  ): Promise<UpdateEmployeeResponse>;
+  deleteEmployee(
+    email: string,
+    mailRequester: string,
+  ): Promise<DeleteEmployeeResponse>;
 }
