@@ -24,7 +24,7 @@ export const expressDevLogger = (
 
   res.end = function (chunk: any, ...args: any): any {
     if (chunk) {
-      chunk.push(Buffer.from(chunk));
+      chunks.push(Buffer.from(chunk));
     }
 
     const elapsedHrTime = process.hrtime(startHrTime);

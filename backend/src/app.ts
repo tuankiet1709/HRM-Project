@@ -60,9 +60,9 @@ class App {
     );
 
     // handle undefined routes
-    this.express.use('*', (req, res, next) => {
-      res.send('Make sure url is correct!!!');
-    });
+    // this.express.use('*', (req, res, next) => {
+    //   res.send('Make sure url is correct!!!');
+    // });
   }
 }
 
