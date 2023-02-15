@@ -107,6 +107,7 @@ export class EmployeeService implements IEmployeeService {
       currentEmployee.dob = dob;
       currentEmployee.phoneNumber = phoneNumber;
       currentEmployee.role = role;
+      currentEmployee.modifiedDate = new Date();
       return new Promise(async function (resolve, reject) {
         currentEmployee
           .save()

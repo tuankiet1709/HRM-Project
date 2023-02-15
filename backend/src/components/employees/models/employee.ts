@@ -12,7 +12,7 @@ interface IEmployeeDocument extends Document {
   phoneNumber: number;
   createdDate: Date;
   modifiedDate: Date;
-  currentTeams: [];
+  currentTeams: [string];
   status: string;
   role: string;
   isDeleted: boolean;
@@ -40,7 +40,7 @@ const employeeSchema = new Schema<IEmployee>({
     maxlength: 10,
     required: true,
   },
-  currentTeams: [{ type: Schema.Types.ObjectId }],
+  currentTeams: [{ type: Schema.Types.ObjectId, ref: 'teams' }],
   status: {
     type: String,
     enum: Status,

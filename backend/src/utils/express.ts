@@ -3,8 +3,8 @@ import { OutgoingHttpHeaders } from 'http';
 
 export function writeJsonResponse(
   res: express.Response,
-  code: any,
-  payload: any,
+  code: number,
+  payload: object,
   headers?: OutgoingHttpHeaders | undefined,
 ): void {
   const data =
