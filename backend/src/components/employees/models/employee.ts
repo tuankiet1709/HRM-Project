@@ -40,7 +40,7 @@ const employeeSchema = new Schema<IEmployee>({
     maxlength: 10,
     required: true,
   },
-  currentTeams: [{ type: Schema.Types.ObjectId, ref: 'teams' }],
+  currentTeams: [{ type: Schema.Types.ObjectId, ref: 'Team' }],
   status: {
     type: String,
     enum: Status,
@@ -74,9 +74,7 @@ employeeSchema.pre<IEmployeeDocument>('save', function (next): void {
 
 employeeSchema.set('toJSON', {
   transform: function (doc, ret, options) {
-    ret.created = ret.created.getTime();
-
-    delete ret._v;
+    delete ret.__v;
     delete ret._id;
     delete ret.password;
   },

@@ -5,6 +5,7 @@ import {
   BaseHttpController,
   controller,
   httpDelete,
+  httpGet,
   httpPost,
   httpPut,
   request,
@@ -24,6 +25,25 @@ export class TeamController extends BaseHttpController {
   constructor(@inject(TYPES.ITeamService) teamService: ITeamService) {
     super();
     this.teamService = teamService;
+  }
+
+  @httpGet('/')
+  public async getTeams(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const teams = await this.teamService.getTeams();
+    writeJsonResponse(res, 200, teams);
+  }
+
+  @httpGet('/:id')
+  public async getById(
+    @request() req: express.Request,
+    @response() res: express.Response,
+  ) {
+    const id = req.query['id'] as string;
+    const team = await this.teamService.getById(id);
+    writeJsonResponse(res, 200, team);
   }
 
   @httpPost('/')
@@ -229,6 +249,10 @@ export class TeamController extends BaseHttpController {
           writeJsonResponse(res, 404, resp);
         } else if (
           (resp as ErrorResponse).error.type === 'invalid_credentials'
+        ) {
+          writeJsonResponse(res, 404, resp);
+        } else if (
+          (resp as ErrorResponse).error.type === 'employee_no_exists_in_team'
         ) {
           writeJsonResponse(res, 404, resp);
         } else {

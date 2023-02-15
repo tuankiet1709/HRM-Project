@@ -32,6 +32,9 @@ interface Config {
     useCreateIndex: boolean;
     autoIndex: boolean;
   };
+  privateKeyFile: string;
+  privateKeyPassphrase: string;
+  publicKeyFile: string;
 }
 
 const config: Config = {
@@ -44,6 +47,9 @@ const config: Config = {
     useCreateIndex: parsedEnv.MONGO_CREATE_INDEX as boolean,
     autoIndex: parsedEnv.MONGO_AUTO_INDEX as boolean,
   },
+  privateKeyFile: parsedEnv.PRIVATE_KEY_FILE as string,
+  privateKeyPassphrase: parsedEnv.PRIVATE_KEY_PASSPHRASE as string,
+  publicKeyFile: parsedEnv.PUBLIC_KEY_FILE as string,
 };
 
 export default config;

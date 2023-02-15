@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import { Schema, Document, model, Model, SchemaType } from 'mongoose';
 import validator from 'validator';
 
-interface ITeamDocument extends Document {
+export interface ITeamDocument extends Document {
   name: string;
   leader: Schema.Types.ObjectId;
   createdDate: Date;
@@ -16,20 +16,17 @@ interface ITeamDocument extends Document {
 
 const teamSchema = new Schema<ITeamDocument>({
   name: { type: String, required: true },
-  leader: { type: Schema.Types.ObjectId, ref: 'employees', required: true },
+  leader: { type: Schema.Types.ObjectId, ref: 'Employee', required: true },
   createdDate: { type: Date, default: Date.now },
   modifiedDate: { type: Date, default: Date.now },
-  createdBy: { type: Schema.Types.ObjectId },
-  employees: [{ type: Schema.Types.ObjectId, ref: 'employees' }],
+  createdBy: { type: Schema.Types.ObjectId, ref: 'Employee' },
+  employees: [{ type: Schema.Types.ObjectId, ref: 'Employee' }],
   isDeleted: { type: Boolean, default: false },
 });
 
 teamSchema.set('toJSON', {
   transform: function (doc, ret, options) {
-    ret.created = ret.created.getTime();
-
-    delete ret._v;
-    delete ret._id;
+    delete ret.__v;
   },
 });
 

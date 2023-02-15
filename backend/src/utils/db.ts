@@ -39,6 +39,7 @@ class MongoConnection {
       } else {
         logger.debug('connecting to mongo db: ' + config.mongo.url);
         await mongoose.connect(config.mongo.url, opts);
+        mongoose.set('strictPopulate', false);
       }
 
       mongoose.connection.on('connected', () => {

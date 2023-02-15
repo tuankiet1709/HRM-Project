@@ -1,15 +1,16 @@
 import {
+  CreateEmployeeResponse,
+  GetEmployeesResponse,
   DeleteEmployeeResponse,
   UpdateEmployeeResponse,
-} from './../../../constants/response';
-import {
-  CreateEmployeeResponse,
+  LoginEmployeeResponse,
   GetEmployeeResponse,
 } from '@src/constants/response';
 import { Role } from '@src/constants/role.enum';
 
 export interface IEmployeeService {
-  findEmployee(email: string): Promise<GetEmployeeResponse>;
+  getEmployees(): Promise<GetEmployeesResponse>;
+  getById(id: string): Promise<GetEmployeeResponse>;
   createEmployee(
     email: string,
     password: string,
@@ -32,4 +33,8 @@ export interface IEmployeeService {
     email: string,
     mailRequester: string,
   ): Promise<DeleteEmployeeResponse>;
+  createAuthToken(
+    employeeId: string,
+  ): Promise<{ token: string; expireAt: Date }>;
+  login(login: string, password: string): Promise<LoginEmployeeResponse>;
 }

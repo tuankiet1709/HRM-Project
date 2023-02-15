@@ -2,10 +2,14 @@ import {
   AddEmployeeToTeamResponse,
   CreateTeamResponse,
   DeleteTeamResponse,
+  GetTeamResponse,
+  GetTeamsResponse,
   UpdateTeamResponse,
 } from './../../../constants/response';
 
 export interface ITeamService {
+  getTeams(): Promise<GetTeamsResponse>;
+  getById(id: string): Promise<GetTeamResponse>;
   createTeam(
     name: string,
     leader: string,

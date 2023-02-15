@@ -1,8 +1,10 @@
 import {
   AddEmployeeToTeamResponse,
+  GetTeamsResponse,
   CreateTeamResponse,
   DeleteTeamResponse,
   UpdateTeamResponse,
+  GetTeamResponse,
 } from './../../../constants/response';
 import { injectable } from 'inversify';
 import logger from '@src/utils/logger';
@@ -14,6 +16,37 @@ import { ITeamService } from './team.service.interface';
 
 @injectable()
 export class TeamService implements ITeamService {
+  async getTeams(): Promise<GetTeamsResponse> {
+    return new Promise(async function (resolve, reject) {
+      try {
+        const teams = await Team.find()
+          .populate('employees')
+          .populate('leader')
+          .select('-isDeleted -__v ');
+        resolve({ teams: teams });
+      } catch (err) {
+        logger.error(`get teams: ${err}`);
+        reject(err);
+      }
+    });
+  }
+  async getById(id: string): Promise<GetTeamResponse> {
+    const team = await Team.findById(id)
+      .populate('employees')
+      .populate('leader')
+      .select('-isDeleted -__v ');
+    if (!team) {
+      return {
+        error: {
+          type: 'team_no_exists',
+          message: 'Team No Exists',
+        },
+      };
+    }
+    return new Promise(function (resolve, reject) {
+      resolve({ team: team });
+    });
+  }
   async createTeam(
     name: string,
     leaderId: string,
@@ -51,6 +84,10 @@ export class TeamService implements ITeamService {
         team
           .save()
           .then((t) => {
+            leader.update(
+              { $push: { currentTeams: t._id } },
+              { new: true, useFindAndModify: false },
+            );
             resolve({ teamId: t._id.toString() });
           })
           .catch((err) => {
@@ -204,10 +241,7 @@ export class TeamService implements ITeamService {
     }
     return new Promise(async function (resolve, reject) {
       team
-        .update(
-          { $push: { employees: employeeId } },
-          { new: true, useFindAndModify: false },
-        )
+        .update({ $push: { employees: employeeId } })
         .then(() => {
           employee
             .update(
@@ -278,14 +312,9 @@ export class TeamService implements ITeamService {
       team
         .save()
         .then(() => {
-          leader
-            .update(
-              { $push: { currentTeams: teamId } },
-              { new: true, useFindAndModify: false },
-            )
-            .then(() => {
-              resolve({ response: true });
-            });
+          leader.update({ $push: { currentTeams: teamId } }).then(() => {
+            resolve({ response: true });
+          });
         })
         .catch((err) => {
           logger.error(`Add leader to team: ${err}`);
@@ -339,6 +368,25 @@ export class TeamService implements ITeamService {
         error: {
           type: 'team_no_exists',
           message: 'Team No Exists',
+        },
+      };
+    }
+
+    const teamAssigned = await Team.find({
+      employees: {
+        $elemMatch: {
+          _id: employeeId,
+        },
+      },
+    });
+
+    logger.debug(teamAssigned);
+
+    if (teamAssigned.length === 0) {
+      return {
+        error: {
+          type: 'employee_no_exists_in_team',
+          message: 'Employee No Exists In Team',
         },
       };
     }

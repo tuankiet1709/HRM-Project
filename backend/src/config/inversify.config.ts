@@ -9,6 +9,7 @@ import { ITeamService } from '@src/components/teams/services/team.service.interf
 
 import '../components/employees/controller/employee.controllers';
 import '../components/teams/controller/team.controllers';
+import AuthMiddleware from '@src/middlewares/auth-middleware';
 
 const container = new Container();
 
@@ -19,6 +20,10 @@ container
 container
   .bind<ITeamService>(TYPES.ITeamService)
   .to(TeamService)
+  .inSingletonScope();
+container
+  .bind<AuthMiddleware>(TYPES.AuthMiddleware)
+  .to(AuthMiddleware)
   .inSingletonScope();
 
 export default container;

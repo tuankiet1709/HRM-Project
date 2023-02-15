@@ -5,7 +5,6 @@ import * as swaggerUI from 'swagger-ui-express';
 import config from './config';
 import morgan = require('morgan');
 import morganBody from 'morgan-body';
-import { expressDevLogger } from './utils/express_dev_logger';
 
 class App {
   public express: express.Application;
@@ -25,26 +24,10 @@ class App {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
 
-    // this.express.use(
-    //   morgan(':method :url :status :response-time ms - :res[content-length]'),
-    // );
-    // morganBody(this.express);
-    // this.express.use(expressDevLogger);
-
-    /* istanbul ignore next */
-    if (config.morganLogger) {
-      this.express.use(
-        morgan(':method :url :status :response-time ms - :res[content-length]'),
-      );
-    }
-    /* istanbul ignore next */
-    if (config.morganBodyLogger) {
-      morganBody(this.express);
-    }
-    /* istanbul ignore next */
-    if (config.devLogger) {
-      this.express.use(expressDevLogger);
-    }
+    this.express.use(
+      morgan(':method :url :status :response-time ms - :res[content-length]'),
+    );
+    morganBody(this.express);
   }
 
   private routes(): void {
