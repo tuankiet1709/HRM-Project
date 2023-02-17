@@ -4,7 +4,13 @@ export type ErrorResponse = { error: { type: string; message: string } };
 export type AuthResponse = ErrorResponse | { userId: string };
 export type LoginEmployeeResponse =
   | ErrorResponse
-  | { token: string; userId: string; expireAt: Date };
+  | {
+      token: string;
+      userId: string;
+      expireAt: Date;
+      name: string;
+      role: string;
+    };
 export type CreateEmployeeResponse = ErrorResponse | { employeeId: string };
 export type GetEmployeesResponse = ErrorResponse | { employees: object };
 export type GetEmployeeResponse = ErrorResponse | { employee: IEmployee };

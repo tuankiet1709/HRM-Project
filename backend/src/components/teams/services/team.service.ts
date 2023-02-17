@@ -21,8 +21,7 @@ export class TeamService implements ITeamService {
       try {
         const teams = await Team.find()
           .populate('employees')
-          .populate('leader')
-          .select('-isDeleted -__v ');
+          .populate('leader');
         resolve({ teams: teams });
       } catch (err) {
         logger.error(`get teams: ${err}`);
@@ -33,8 +32,7 @@ export class TeamService implements ITeamService {
   async getById(id: string): Promise<GetTeamResponse> {
     const team = await Team.findById(id)
       .populate('employees')
-      .populate('leader')
-      .select('-isDeleted -__v ');
+      .populate('leader');
     if (!team) {
       return {
         error: {
@@ -47,6 +45,7 @@ export class TeamService implements ITeamService {
       resolve({ team: team });
     });
   }
+
   async createTeam(
     name: string,
     leaderId: string,
@@ -84,11 +83,15 @@ export class TeamService implements ITeamService {
         team
           .save()
           .then((t) => {
-            leader.update(
-              { $push: { currentTeams: t._id } },
-              { new: true, useFindAndModify: false },
-            );
-            resolve({ teamId: t._id.toString() });
+            leader
+              .update(
+                { $push: { currentTeams: t._id } },
+                { new: true, useFindAndModify: false },
+              )
+              .then((l) => {
+                console.log(l);
+                resolve({ teamId: t._id.toString() });
+              });
           })
           .catch((err) => {
             if (err.code === 11000) {
@@ -231,11 +234,30 @@ export class TeamService implements ITeamService {
       };
     }
     const team = await Team.findById(teamId);
-    if (!team) {
+    if (!team || team.isDeleted === true) {
       return {
         error: {
           type: 'team_no_exists',
           message: 'Team No Exists',
+        },
+      };
+    }
+
+    const teamAssigned = await Team.find({
+      _id: teamId,
+      employees: {
+        $elemMatch: {
+          _id: employeeId,
+        },
+      },
+    });
+
+    if (teamAssigned.length > 0) {
+      console.log(teamAssigned);
+      return {
+        error: {
+          type: 'employee_exists_in_team',
+          message: 'Employee Exists In Team',
         },
       };
     }
@@ -379,8 +401,6 @@ export class TeamService implements ITeamService {
         },
       },
     });
-
-    logger.debug(teamAssigned);
 
     if (teamAssigned.length === 0) {
       return {

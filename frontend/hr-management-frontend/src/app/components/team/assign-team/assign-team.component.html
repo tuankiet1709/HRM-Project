@@ -1,0 +1,31 @@
+<div class="d-flex justify-content-center w-100 mb-5 mt-5">
+  <div class="login-box w-75">
+    <h2>{{editMode?"Edit Team":"Create new Team"}}</h2>
+    <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3 form-floating">
+        <select formControlName="member" class="form-select custom-select ">
+            <option *ngFor="let member of members" [value]="member._id">
+                {{ member.name }}
+            </option>
+          </select>
+        <label for="memberId">Members</label>
+      </div>
+
+      <div class="row">
+        <div class="col-md-5">
+          <button
+            type="submit"
+            [disabled]="!teamForm.valid"
+            class="btn btn-success w-100"
+          >
+          {{editMode?"Save":"Create"}}
+        </button>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+          <button type="submit" class="btn btn-secondary w-100" (click)="onCancel()">Cancel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

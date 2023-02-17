@@ -75,7 +75,6 @@ employeeSchema.pre<IEmployeeDocument>('save', function (next): void {
 employeeSchema.set('toJSON', {
   transform: function (doc, ret, options) {
     delete ret.__v;
-    delete ret._id;
     delete ret.password;
   },
 });

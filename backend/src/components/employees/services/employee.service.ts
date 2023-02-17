@@ -19,9 +19,7 @@ import { Status } from '@src/constants/status.enum';
 @injectable()
 export class EmployeeService implements IEmployeeService {
   async getEmployees(): Promise<GetEmployeesResponse> {
-    const employees = await Employee.find()
-      .populate('currentTeams')
-      .select('-isDeleted -__v ');
+    const employees = await Employee.find().populate('currentTeams');
     logger.debug(employees);
     return new Promise(function (resolve, reject) {
       resolve({ employees: employees });
@@ -29,9 +27,12 @@ export class EmployeeService implements IEmployeeService {
   }
 
   async getById(id: string): Promise<GetEmployeeResponse> {
-    const employee = await Employee.findById(id)
-      .populate('currentTeams')
-      .select('-isDeleted -__v ');
+    const employee = await Employee.findById(id).populate({
+      path: 'currentTeams',
+      populate: {
+        path: 'leader',
+      },
+    });
     if (!employee) {
       return {
         error: {
@@ -89,12 +90,15 @@ export class EmployeeService implements IEmployeeService {
           },
         };
       }
+      logger.debug(user.name);
 
       const authToken = await this.createAuthToken(user._id.toString());
       return {
         userId: user._id.toString(),
         token: authToken.token,
         expireAt: authToken.expireAt,
+        name: user.name,
+        role: user.role,
       };
     } catch (err) {
       logger.error(`login ${err}`);
@@ -116,6 +120,7 @@ export class EmployeeService implements IEmployeeService {
     role: Role,
     emailRequester: string,
   ): Promise<CreateEmployeeResponse> {
+    logger.debug(email);
     const creator = await Employee.findOne({ email: emailRequester });
     if (
       !creator ||
@@ -123,6 +128,7 @@ export class EmployeeService implements IEmployeeService {
       creator.isDeleted === true ||
       creator.status === Status.UNAVAILABLE
     ) {
+      logger.debug('132');
       return {
         error: {
           type: 'invalid_credentials',
@@ -139,6 +145,8 @@ export class EmployeeService implements IEmployeeService {
           phoneNumber: phoneNumber,
           role: role,
         });
+        logger.debug('148');
+        logger.debug(employee);
         employee
           .save()
           .then((e) => {
@@ -266,12 +274,6 @@ export class EmployeeService implements IEmployeeService {
             await Team.where('_id')
               .in(teamAssigned)
               .updateMany({ $pull: { employees: e._id } });
-
-            // const test2 = await Team.find({ 'employess._id': e._id });
-
-            // logger.debug('262');
-            // logger.debug(test);
-            // logger.debug(test2);
 
             resolve({ employeeId: e._id.toString() });
           })

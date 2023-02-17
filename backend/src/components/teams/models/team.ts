@@ -16,7 +16,7 @@ export interface ITeamDocument extends Document {
 
 const teamSchema = new Schema<ITeamDocument>({
   name: { type: String, required: true },
-  leader: { type: Schema.Types.ObjectId, ref: 'Employee', required: true },
+  leader: { type: Schema.Types.ObjectId, ref: 'Employee' },
   createdDate: { type: Date, default: Date.now },
   modifiedDate: { type: Date, default: Date.now },
   createdBy: { type: Schema.Types.ObjectId, ref: 'Employee' },

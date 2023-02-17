@@ -1,0 +1,33 @@
+<mat-sidenav-container>
+  <mat-sidenav mode="side" color="primary" opened *ngIf="isLogin()">
+    <h1 class="name text-white">{{ name }}</h1>
+    <h4 class="text-white">{{ role }}</h4>
+
+    <mat-divider></mat-divider>
+
+    <button mat-button class="menu-button text-white" routerLink="/teams" *ngIf="role !== 'ADMIN'">
+      <span>Your Teams</span>
+    </button>
+    <button
+      mat-button
+      class="menu-button text-white"
+      routerLink="/all-teams"
+      *ngIf="role === 'ADMIN'"
+    >
+      <span>All Team</span>
+    </button>
+    <button
+      mat-button
+      class="menu-button text-white"
+      routerLink="/all-employees"
+      *ngIf="role !== 'MEMBER'"
+    >
+      <span>All Employees</span>
+    </button>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="content mat-elevation-z8">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

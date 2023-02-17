@@ -2,9 +2,9 @@ import * as bodyParser from 'body-parser';
 import express from 'express';
 import fs = require('fs');
 import * as swaggerUI from 'swagger-ui-express';
-import config from './config';
 import morgan = require('morgan');
 import morganBody from 'morgan-body';
+import cors from 'cors';
 
 class App {
   public express: express.Application;
@@ -21,6 +21,7 @@ class App {
 
   // Configure Express middleware.
   private middleware(): void {
+    this.express.use(cors());
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
 
@@ -31,9 +32,9 @@ class App {
   }
 
   private routes(): void {
-    this.express.get('/', (req, res, next) => {
-      res.send('Typescript App works!!');
-    });
+    // this.express.get('/', (req, res, next) => {
+    //   res.send('Typescript App works!!');
+    // });
 
     // swagger docs
     this.express.use(

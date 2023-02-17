@@ -23,5 +23,5 @@ logger.info(prettyjson.render({ routes: routeInfo }));
 db.open();
 
 appConfigured.listen(port, () => {
-  logger.info('Server is listening on port', port);
+  logger.info('Server is listening on port: ' + port);
 });

@@ -9,6 +9,7 @@ import {
   httpPost,
   httpPut,
   request,
+  requestParam,
   response,
 } from 'inversify-express-utils';
 import * as express from 'express';
@@ -27,7 +28,7 @@ export class TeamController extends BaseHttpController {
     this.teamService = teamService;
   }
 
-  @httpGet('/')
+  @httpGet('/', TYPES.AuthMiddleware)
   public async getTeams(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -36,17 +37,18 @@ export class TeamController extends BaseHttpController {
     writeJsonResponse(res, 200, teams);
   }
 
-  @httpGet('/:id')
+  @httpGet('/:id', TYPES.AuthMiddleware)
   public async getById(
+    @requestParam('id') id: string,
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const id = req.query['id'] as string;
+    logger.debug(id);
     const team = await this.teamService.getById(id);
     writeJsonResponse(res, 200, team);
   }
 
-  @httpPost('/')
+  @httpPost('/', TYPES.AuthMiddleware)
   public async createTeam(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -84,7 +86,7 @@ export class TeamController extends BaseHttpController {
     }
   }
 
-  @httpPut('/')
+  @httpPut('/', TYPES.AuthMiddleware)
   public async updateTeam(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -114,7 +116,7 @@ export class TeamController extends BaseHttpController {
     }
   }
 
-  @httpDelete('/')
+  @httpDelete('/', TYPES.AuthMiddleware)
   public async deleteTeam(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -144,7 +146,7 @@ export class TeamController extends BaseHttpController {
     }
   }
 
-  @httpPost('/add2team')
+  @httpPost('/add2team', TYPES.AuthMiddleware)
   public async addEmployeeToTeam(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -156,6 +158,7 @@ export class TeamController extends BaseHttpController {
         employeeId,
         emailRequester,
       );
+
       if ((resp as any).error) {
         if ((resp as ErrorResponse).error.type === 'team_no_exists') {
           writeJsonResponse(res, 404, resp);
@@ -165,6 +168,10 @@ export class TeamController extends BaseHttpController {
           writeJsonResponse(res, 404, resp);
         } else if (
           (resp as ErrorResponse).error.type === 'employee_is_unavailable'
+        ) {
+          writeJsonResponse(res, 404, resp);
+        } else if (
+          (resp as ErrorResponse).error.type === 'employee_exists_in_team'
         ) {
           writeJsonResponse(res, 404, resp);
         } else if (
@@ -188,7 +195,7 @@ export class TeamController extends BaseHttpController {
     }
   }
 
-  @httpPost('/changeleader')
+  @httpPost('/changeleader', TYPES.AuthMiddleware)
   public async addLeader2Team(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -232,7 +239,7 @@ export class TeamController extends BaseHttpController {
     }
   }
 
-  @httpPost('/removefromteam')
+  @httpPost('/removefromteam', TYPES.AuthMiddleware)
   public async removeEmployeeToTeam(
     @request() req: express.Request,
     @response() res: express.Response,

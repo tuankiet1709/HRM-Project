@@ -16,7 +16,6 @@ export default class AuthMiddleware extends BaseMiddleware {
     try {
       if (token) {
         const authResponse = await auth(token);
-        logger.debug(authResponse);
 
         if (!(authResponse as any).error) {
           res.locals.auth = {

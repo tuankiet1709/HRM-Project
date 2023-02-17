@@ -1,0 +1,55 @@
+<div class="login-page">
+  <mat-card class="mat-elevation-z12">
+    <mat-card-title style="text-align:center;">Sign In</mat-card-title>
+          <mat-card-content>
+            <form (ngSubmit)="onLogin(fl)" #fl="ngForm">
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Email"
+                  required
+                  name="emailLogin"
+                  ngModel
+                  #emailLogin="ngModel">
+                  <mat-error *ngIf="emailLogin.invalid">Email is required</mat-error>
+                <mat-icon matSuffix>email</mat-icon>
+              </mat-form-field>
+              <mat-form-field>
+                <input
+                  matInput
+                  placeholder="Password"
+                  type="password"
+                  required
+                  name="passwordLogin"
+                  ngModel
+                  #passwordLogin="ngModel">
+                  <mat-error
+                    *ngIf="passwordLogin.errors && passwordLogin.errors?.['required']">
+                    Password is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="passwordLogin.errors && passwordLogin.errors?.['pattern']">
+                    Password must minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character
+                  </mat-error>
+                <mat-icon matSuffix>lock</mat-icon>
+              </mat-form-field>
+              <mat-checkbox class="mt-checkbox">Remember Me!</mat-checkbox>
+              <button
+                mat-raised-button
+                color="primary"
+                class="login-button bg-button"
+                [disabled]="fl.invalid">
+                Sign In
+              </button>
+              <!-- <button
+                mat-raised-button
+                color="primary"
+                class="login-button bg-button"
+                [disabled]=true
+                *ngIf="Loading">
+                <mat-spinner></mat-spinner>
+              </button> -->
+            </form>
+          </mat-card-content>
+  </mat-card>
+</div>

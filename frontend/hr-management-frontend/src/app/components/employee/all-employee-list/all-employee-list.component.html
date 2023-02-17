@@ -1,0 +1,28 @@
+<h1>Employee management</h1>
+<button (click)="onNewEmployee()" class="btn btn-success p-2 mb-3">
+  Create new employee
+</button>
+<div class="mx-auto w-auto">
+  <table class="table table-striped table-hover center">
+    <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Role</th>
+        <th scope="col">Status</th>
+
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of employees; let i = index">
+        <td class="align-middle fs-6">{{ employee.name }}</td>
+        <td class="align-middle fs-6">{{ employee.email }}</td>
+        <td class="align-middle fs-6">{{ employee.phoneNumber }}</td>
+        <td class="align-middle fs-6">{{ employee.role }}</td>
+        <td class="align-middle fs-6">{{ employee.status }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

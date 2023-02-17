@@ -8,6 +8,7 @@ import {
   httpPost,
   httpPut,
   request,
+  requestParam,
   response,
 } from 'inversify-express-utils';
 import * as express from 'express';
@@ -29,7 +30,7 @@ export class EmployeeController extends BaseHttpController {
     this.employeeService = employeeService;
   }
 
-  @httpGet('/')
+  @httpGet('/', TYPES.AuthMiddleware)
   public async getEmployees(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -38,16 +39,15 @@ export class EmployeeController extends BaseHttpController {
     writeJsonResponse(res, 200, employees);
   }
 
-  @httpGet('/:id')
+  @httpGet('/:id', TYPES.AuthMiddleware)
   public async getById(
+    @requestParam('id') id: string,
     @request() req: express.Request,
     @response() res: express.Response,
-  ) {
-    const id = req.query['id'] as string;
+  ): Promise<void> {
     const employee = await this.employeeService.getById(id);
     writeJsonResponse(res, 200, employee);
   }
-
   @httpPost('/login')
   public async login(
     @request() req: express.Request,
@@ -63,16 +63,24 @@ export class EmployeeController extends BaseHttpController {
           throw new Error(`unsupported ${resp}`);
         }
       } else {
-        const { userId, token, expireAt } = resp as {
+        const { userId, token, expireAt, name, role } = resp as {
           token: string;
           userId: string;
           expireAt: Date;
+          name: string;
+          role: string;
         };
 
         writeJsonResponse(
           res,
           200,
-          { userId: userId, token: token },
+          {
+            userId: userId,
+            token: token,
+            expireAt: expireAt.toISOString(),
+            name: name,
+            role: role,
+          },
           { 'X-Expires-After': expireAt.toISOString() },
         );
       }
@@ -92,7 +100,7 @@ export class EmployeeController extends BaseHttpController {
     @request() req: express.Request,
     @response() res: express.Response,
   ) {
-    const { email, password, name, dob, phoneNumber, role, mailRequester } =
+    const { email, password, name, dob, phoneNumber, role, emailRequester } =
       req.body;
     try {
       const resp = await this.employeeService.createEmployee(
@@ -102,14 +110,17 @@ export class EmployeeController extends BaseHttpController {
         dob,
         phoneNumber,
         role,
-        mailRequester,
+        emailRequester,
       );
+      logger.debug(emailRequester);
       if ((resp as any).error) {
         if ((resp as ErrorResponse).error.type === 'employee_already_exists') {
+          logger.debug(116);
           writeJsonResponse(res, 409, resp);
         } else if (
           (resp as ErrorResponse).error.type === 'invalid_credentials'
         ) {
+          logger.debug(120);
           writeJsonResponse(res, 404, resp);
         } else {
           throw new Error(`unsupport ${resp}`);
@@ -127,7 +138,7 @@ export class EmployeeController extends BaseHttpController {
       });
     }
   }
-  @httpPut('/')
+  @httpPut('/', TYPES.AuthMiddleware)
   public async updateEmployee(
     @request() req: express.Request,
     @response() res: express.Response,
@@ -168,7 +179,7 @@ export class EmployeeController extends BaseHttpController {
     }
   }
 
-  @httpDelete('/')
+  @httpDelete('/', TYPES.AuthMiddleware)
   public async deleteEmployee(
     @request() req: express.Request,
     @response() res: express.Response,

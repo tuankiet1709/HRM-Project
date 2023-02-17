@@ -1,0 +1,32 @@
+<mat-toolbar color="primary">
+  <span
+    ><a routerLink="/" *ngIf="!isLogin()">HR Management Application</a></span
+  >
+  <span
+    ><a routerLink="/teams" *ngIf="isLogin()"
+      >HR Management Application</a
+    ></span
+  >
+
+  <span class="spacer"></span>
+
+  <ul>
+    <li *ngIf="!isLogin()">
+      <a mat-button routerLink="/login" routerLinkActive="mat-accent">Login</a>
+    </li>
+    <li *ngIf="isLogin()">
+      <a mat-button routerLink="/login" routerLinkActive="mat-accent"
+        >Hello {{ name }}</a
+      >
+    </li>
+    <li *ngIf="isLogin()">
+      <a
+        mat-button
+        routerLink="/login"
+        (click)="onLogout()"
+        routerLinkActive="mat-accent"
+        >Logout</a
+      >
+    </li>
+  </ul>
+</mat-toolbar>

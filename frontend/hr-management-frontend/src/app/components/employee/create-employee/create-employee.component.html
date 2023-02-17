@@ -1,0 +1,90 @@
+<div class="d-flex justify-content-center w-100 mb-5 mt-5">
+  <div class="login-box w-75">
+    <h2>{{ editMode ? "Edit Employee" : "Create new Employee" }}</h2>
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3 form-floating">
+        <input
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="name"
+          formControlName="name"
+        />
+        <label for="name">Name</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <input
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="email"
+          pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+          required
+          formControlName="email"
+        />
+        <label for="email">Email</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <input
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="password"
+          type="password"
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+          required
+          formControlName="password"
+        />
+        <label for="password">Password</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <input
+          class="form-control"
+          placeholder="Leave a comment here"
+          type="number"
+          minlength="10"
+          maxlength="10"
+          id="phoneNumber"
+          formControlName="phoneNumber"
+        />
+        <label for="phoneNumber">Phone Number</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <input
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="dob"
+          formControlName="dob"
+        />
+        <label for="dob">Date of Birth</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <select formControlName="role" class="form-select custom-select">
+          <option *ngFor="let role of roles" [value]="role">
+            {{ role }}
+          </option>
+        </select>
+        <label for="leaderId">Role</label>
+      </div>
+
+      <div class="row">
+        <div class="col-md-5">
+          <button
+            type="submit"
+            [disabled]="!employeeForm.valid"
+            class="btn btn-success w-100"
+          >
+            {{ editMode ? "Save" : "Create" }}
+          </button>
+        </div>
+        <div class="col-md-2"></div>
+        <div class="col-md-5">
+          <button
+            type="submit"
+            class="btn btn-secondary w-100"
+            (click)="onCancel()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
